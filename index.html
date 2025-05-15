@@ -5,355 +5,662 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mall Analytics Dashboard</title>
     <style>
-        /* Reset and Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Modern Reset and Base Styles */
+    :root {
+        --primary: #4361ee;
+        --primary-light: #e0e7ff;
+        --secondary: #3a0ca3;
+        --success: #4ade80;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --info: #06b6d4;
+        --dark: #1e293b;
+        --light: #f8fafc;
+        --gray: #94a3b8;
+        --gray-light: #e2e8f0;
+        --white: #ffffff;
+        --black: #000000;
+        
+        --sidebar-width: 240px;
+        --header-height: 80px;
+        --card-radius: 12px;
+        --transition: all 0.3s ease;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    html {
+        font-size: 16px;
+    }
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f1f5f9;
+        color: var(--dark);
+        line-height: 1.5;
+        overflow-x: hidden;
+    }
+    
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    /* Dashboard Layout */
+    .dashboard {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+    }
+    
+    /* Sidebar Styles */
+    .sidebar {
+        width: var(--sidebar-width);
+        background: var(--white);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem 0;
+        position: fixed;
+        height: 100vh;
+        z-index: 100;
+        transition: var(--transition);
+    }
+    
+    .logo {
+        padding: 0 1.5rem 1.5rem;
+        border-bottom: 1px solid var(--gray-light);
+        display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    }
+    .logo-img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+    
+    .logo h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .logo h2 i {
+        color: var(--primary);
+    }
+    
+    .logo h2 span {
+        color: var(--primary);
+    }
+    
+    .nav-menu {
+        padding: 1.5rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        color: var(--gray);
+        font-weight: 500;
+        position: relative;
+        transition: var(--transition);
+        cursor: pointer;
+    }
+    
+    .nav-item:hover {
+        color: var(--primary);
+        background: var(--primary-light);
+    }
+    
+    .nav-item.active {
+        color: var(--primary);
+        background: var(--primary-light);
+    }
+    
+    .nav-item.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background: var(--primary);
+        border-radius: 0 4px 4px 0;
+    }
+    
+    .nav-item i {
+        width: 24px;
+        text-align: center;
+    }
+    
+    .badge {
+        background: var(--primary);
+        color: var(--white);
+        font-size: 0.75rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 999px;
+        margin-left: auto;
+    }
+    
+    /* Main Content Styles */
+    .main-content {
+        flex: 1;
+        margin-left: var(--sidebar-width);
+        transition: var(--transition);
+    }
+    
+    /* Header Styles */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        background: var(--white);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        height: var(--header-height);
+        position: sticky;
+        top: 0;
+        z-index: 90;
+    }
+    
+    .header-title h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .header-title p {
+        font-size: 0.875rem;
+        color: var(--gray);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-top: 0.25rem;
+    }
+    
+    .header-title p i {
+        color: var(--success);
+        font-size: 0.5rem;
+    }
+    
+    .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .date-filter {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--white);
+        border: 1px solid var(--gray-light);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        position: relative;
+        transition: var(--transition);
+    }
+    
+    .date-filter:hover {
+        border-color: var(--primary);
+    }
+    
+    .date-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: var(--white);
+        border: 1px solid var(--gray-light);
+        border-radius: 8px;
+        padding: 0.5rem 0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        width: 180px;
+        z-index: 10;
+        display: none;
+    }
+    
+    .date-dropdown.show {
+        display: block;
+    }
+    
+    .date-option {
+        padding: 0.5rem 1rem;
+        transition: var(--transition);
+        cursor: pointer;
+    }
+    
+    .date-option:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+    
+    .date-option.active {
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+    
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .user-profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .user-name {
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+    
+    .user-role {
+        font-size: 0.75rem;
+        color: var(--gray);
+    }
+    
+    /* Dashboard Grid */
+    .dashboard-grid {
+        padding: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1.5rem;
+        transition: var(--transition);
+    }
+    
+    .dashboard-grid.loading {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+    
+    /* Card Styles */
+    .kpi-card, .chart-container {
+        background: var(--white);
+        border-radius: var(--card-radius);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        transition: var(--transition);
+    }
+    
+    .kpi-card:hover, .chart-container:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    /* KPI Card Specific */
+    .kpi-card {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .kpi-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+    
+    .kpi-title {
+        font-size: 0.875rem;
+        color: var(--gray);
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+    
+    .kpi-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+    
+    .kpi-change {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .kpi-change.positive {
+        color: var(--success);
+    }
+    
+    .kpi-change.negative {
+        color: var(--danger);
+    }
+    
+    .kpi-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: var(--white);
+    }
+    
+    /* Chart Containers */
+    .chart-wrapper {
+        position: flex;
+        height: 250px;
+        width: 100%;
+    }
+    
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .chart-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--dark);
+    }
+    
+    .chart-options {
+        display: flex;
+        gap: 0.5rem;
+        background: var(--gray-light);
+        padding: 0.25rem;
+        border-radius: 8px;
+    }
+    
+    .chart-option {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    
+    .chart-option:hover {
+        background: rgba(255, 255, 255, 0.5);
+    }
+    
+    .chart-option.active {
+        background: var(--white);
+        color: var(--primary);
+    }
+    
+    /* Heatmap Styles */
+    .heatmap {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .heatmap-cell {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--white);
+        transition: var(--transition);
+        cursor: pointer;
+    }
+    
+    /* Table Styles */
+    .mall-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .mall-table th {
+        text-align: left;
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--gray);
+        text-transform: uppercase;
+        background: var(--gray-light);
+    }
+    
+    .mall-table td {
+        padding: 1rem;
+        font-size: 0.875rem;
+        border-bottom: 1px solid var(--gray-light);
+    }
+    
+    .progress-bar {
+        height: 6px;
+        background: var(--gray-light);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    
+    .progress-value {
+        height: 100%;
+        border-radius: 3px;
+    }
+    
+    .trend-icon {
+        font-size: 1rem;
+    }
+    
+    /* Legend Styles */
+    .legend {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .legend-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+    }
+    
+    /* Tooltip */
+    .tooltip {
+        position: absolute;
+        background: var(--dark);
+        color: var(--white);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        z-index: 1000;
+    }
+    
+    /* Menu Toggle (Mobile) */
+    .menu-toggle {
+        display: none;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 110;
+        background: var(--primary);
+        color: var(--white);
+        width: 0px;
+        height: 0px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Responsive Grid Layout */
+    .card-1 {
+        grid-column: span 3;
+    }
+    
+    .card-2 {
+        grid-column: span 3;
+    }
+    
+    .card-3 {
+        grid-column: span 3;
+    }
+    
+    .card-4 {
+        grid-column: span 3;
+    }
+    
+    .card-5 {
+        grid-column: span 8;
+        height: 380px;
+    }
+    
+    .card-6 {
+        grid-column: span 4;
+        height: 380px;
+    }
+    
+    .card-7 {
+        grid-column: span 6;
+        height: 380px;
+    }
+    
+    .card-8 {
+        grid-column: span 6;
+        height: 380px;
+    }
+    
+    /* Loading Animation */
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .fa-spin {
+        animation: spin 1s linear infinite;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 1600px) {
+        .card-1, .card-2, .card-3, .card-4 {
+            grid-column: span 6;
+        }
+    }
+    
+    @media (max-width: 1200px) {
+        .card-5, .card-7 {
+            grid-column: span 12;
         }
         
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            overflow-x: hidden;
+        .card-6, .card-8 {
+            grid-column: span 12;
         }
-        
-        /* Dashboard Container */
-        .dashboard {
-            display: grid;
-            grid-template-columns: 240px 1fr;
-            min-height: 100vh;
-        }
-        
-        /* Sidebar Styles */
+    }
+    
+    @media (max-width: 992px) {
         .sidebar {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            transform: translateX(-100%);
         }
         
-        .logo {
-            text-align: center;
-            padding: 0 20px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .sidebar.open {
+            transform: translateX(0);
         }
         
-        .logo h2 {
-            font-weight: 600;
-            font-size: 20px;
-        }
-        
-        .logo span {
-            color: #3498db;
-        }
-        
-        .nav-menu {
-            margin-top: 30px;
-        }
-        
-        .nav-item {
-            padding: 12px 25px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .nav-item:hover, .nav-item.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-left: 3px solid #3498db;
-        }
-        
-        .nav-item i {
-            margin-right: 10px;
-            font-size: 18px;
-        }
-        
-        /* Main Content Styles */
         .main-content {
-            padding: 20px;
+            margin-left: 0;
         }
         
-        /* Header Styles */
-        .header {
+        .menu-toggle {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
         }
         
-        .header-title h1 {
-            font-size: 24px;
-            color: #2c3e50;
+        .card-1, .card-2, .card-3, .card-4,
+        .card-5, .card-6, .card-7, .card-8 {
+            grid-column: span 1;
         }
         
-        .header-title p {
-            color: #7f8c8d;
-            font-size: 14px;
+        .header {
+            flex-direction: column;
+            height: auto;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .header-title {
+            text-align: center;
         }
         
         .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            flex-direction: column;
+            width: 100%;
         }
         
         .date-filter {
-            background: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-        }
-        
-        .date-filter i {
-            margin-right: 8px;
-            color: #3498db;
+            width: 100%;
+            justify-content: center;
         }
         
         .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .user-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            grid-auto-rows: minmax(150px, auto);
-            gap: 20px;
-        }
-        
-        /* KPI Cards */
-        .kpi-card {
-            background: white;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .kpi-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        
-        .kpi-title {
-            font-size: 14px;
-            color: #7f8c8d;
-            font-weight: 500;
-        }
-        
-        .kpi-value {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        
-        .kpi-change {
-            display: flex;
-            align-items: center;
-            font-size: 12px;
-        }
-        
-        .kpi-change.positive {
-            color: #27ae60;
-        }
-        
-        .kpi-change.negative {
-            color: #e74c3c;
-        }
-        
-        .kpi-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
+            width: 120%;
             justify-content: center;
-            color: white;
         }
-        
-        /* Chart Containers */
-        .chart-container {
-            background: white;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-        
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .chart-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        
-        .chart-options {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .chart-option {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            background: #f1f5f9;
-            color: #64748b;
-        }
-        
-        .chart-option.active {
-            background: #3498db;
-            color: white;
-        }
-        
-        /* Chart Canvas */
-        .chart-wrapper {
-            position: relative;
-            height: 200px;
-            margin-top: 10px;
-        }
-        
-        /* Heatmap Styles */
-        .heatmap {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            margin-top: 15px;
-        }
-        
-        .heatmap-cell {
-            height: 30px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: white;
-            font-weight: bold;
-        }
-        
-        /* Legend Styles */
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-            font-size: 12px;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
-        }
-        
-        /* Table Styles */
-        .mall-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-        
-        .mall-table th {
-            text-align: left;
-            padding: 10px;
-            background: #f8fafc;
-            color: #64748b;
-            font-weight: 500;
-        }
-        
-        .mall-table td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        
-        .mall-table tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .progress-bar {
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .progress-value {
-            height: 100%;
-            border-radius: 3px;
-        }
-        
-        /* Grid Placement */
-        .card-1 { grid-column: span 3; background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
-        .card-2 { grid-column: span 3; }
-        .card-3 { grid-column: span 3; }
-        .card-4 { grid-column: span 3; }
-        .card-5 { grid-column: span 8; grid-row: span 2; }
-        .card-6 { grid-column: span 4; grid-row: span 2; }
-        .card-7 { grid-column: span 6; grid-row: span 2; }
-        .card-8 { grid-column: span 6; grid-row: span 2; }
-        
-        /* Responsive Adjustments */
-        @media (max-width: 1200px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                display: none;
-            }
-            
-            .card-1, .card-2, .card-3, .card-4 {
-                grid-column: span 6;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .card-1, .card-2, .card-3, .card-4, 
-            .card-5, .card-6, .card-7, .card-8 {
-                grid-column: span 12;
-            }
-        }
-    </style>
+    }
+</style>
     <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chart.js for visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Luxon for date handling -->
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
+    <!-- Chart.js adapter for Luxon -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.2.0/dist/chartjs-adapter-luxon.min.js"></script>
+    <!-- Chart.js streaming plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0/dist/chartjs-plugin-streaming.min.js"></script>
 </head>
 <body>
+    <!-- Mobile Menu Toggle -->
+    <div class="menu-toggle" id="menuToggle">
+    </div>
+    
     <div class="dashboard">
         <!-- Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="logo">
-                <h2>Mall<span>Analytics</span></h2>
+                <img src="./assets/xgen-logo.png" alt="Mall Logo" class="logo-img">
+                
             </div>
             <div class="nav-menu">
                 <div class="nav-item active">
@@ -363,6 +670,7 @@
                 <div class="nav-item">
                     <i class="fas fa-shopping-bag"></i>
                     <span>Sales</span>
+                    <div class="badge">3</div>
                 </div>
                 <div class="nav-item">
                     <i class="fas fa-users"></i>
@@ -375,10 +683,15 @@
                 <div class="nav-item">
                     <i class="fas fa-store"></i>
                     <span>Tenants</span>
+                    <div class="badge">1</div>
                 </div>
                 <div class="nav-item">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help Center</span>
                 </div>
             </div>
         </div>
@@ -388,27 +701,40 @@
             <!-- Header -->
             <div class="header">
                 <div class="header-title">
-                    <h1>Mall Performance Dashboard</h1>
-                    <p>Last updated: Today, 10:45 AM</p>
+                    <h1>Mall Performance Dashboard <i class="fas fa-sync-alt" id="refreshBtn" style="font-size: 18px; cursor: pointer;"></i></h1>
+                    <p><i class="fas fa-circle"></i> Real-time data streaming enabled</p>
                 </div>
                 <div class="header-controls">
-                    <div class="date-filter">
+                    <div class="date-filter" id="dateFilter">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Last 30 Days</span>
-                        <i class="fas fa-chevron-down" style="margin-left: 8px;"></i>
+                        <i class="fas fa-chevron-down"></i>
+                        <div class="date-dropdown" id="dateDropdown">
+                            <div class="date-option active" data-value="30">Last 30 Days</div>
+                            <div class="date-option" data-value="7">Last 7 Days</div>
+                            <div class="date-option" data-value="90">Last Quarter</div>
+                            <div class="date-option" data-value="365">Last Year</div>
+                            <div class="date-option" data-value="custom">Custom Range</div>
+                        </div>
                     </div>
-                    
+                    <div class="user-profile">
+                        <img src="./assets/xgen-logo.png" alt="User">
+                        <div class="user-info">
+                            <div class="user-name">Ashish Kale</div>
+                            <div class="user-role">Data Analyst/WebApp Dev</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- Dashboard Grid -->
-            <div class="dashboard-grid">
+            <div class="dashboard-grid" id="dashboardGrid">
                 <!-- KPI Card 1 -->
                 <div class="kpi-card card-1">
                     <div class="kpi-header">
                         <div>
                             <div class="kpi-title">TOTAL SALES</div>
-                            <div class="kpi-value">$2.45M</div>
+                            <div class="kpi-value" id="totalSales">$2.45M</div>
                             <div class="kpi-change positive">
                                 <i class="fas fa-arrow-up"></i>
                                 <span>12.5% vs last period</span>
@@ -428,13 +754,13 @@
                     <div class="kpi-header">
                         <div>
                             <div class="kpi-title">DAILY FOOTFALL</div>
-                            <div class="kpi-value">24,568</div>
+                            <div class="kpi-value" id="dailyFootfall">24,568</div>
                             <div class="kpi-change negative">
                                 <i class="fas fa-arrow-down"></i>
                                 <span>3.2% vs last week</span>
                             </div>
                         </div>
-                        <div class="kpi-icon" style="background: #3498db;">
+                        <div class="kpi-icon" style="background: var(--primary);">
                             <i class="fas fa-walking"></i>
                         </div>
                     </div>
@@ -448,13 +774,13 @@
                     <div class="kpi-header">
                         <div>
                             <div class="kpi-title">AVG. SPEND</div>
-                            <div class="kpi-value">$98.75</div>
+                            <div class="kpi-value" id="avgSpend">$98.75</div>
                             <div class="kpi-change positive">
                                 <i class="fas fa-arrow-up"></i>
                                 <span>8.1% vs last period</span>
                             </div>
                         </div>
-                        <div class="kpi-icon" style="background: #2ecc71;">
+                        <div class="kpi-icon" style="background: var(--success);">
                             <i class="fas fa-receipt"></i>
                         </div>
                     </div>
@@ -468,13 +794,13 @@
                     <div class="kpi-header">
                         <div>
                             <div class="kpi-title">OCCUPANCY RATE</div>
-                            <div class="kpi-value">92.4%</div>
+                            <div class="kpi-value" id="occupancyRate">92.4%</div>
                             <div class="kpi-change positive">
                                 <i class="fas fa-arrow-up"></i>
                                 <span>1.8% vs last quarter</span>
                             </div>
                         </div>
-                        <div class="kpi-icon" style="background: #e74c3c;">
+                        <div class="kpi-icon" style="background: var(--danger);">
                             <i class="fas fa-store"></i>
                         </div>
                     </div>
@@ -488,9 +814,9 @@
                     <div class="chart-header">
                         <div class="chart-title">Sales Trend - Mall Comparison</div>
                         <div class="chart-options">
-                            <div class="chart-option active">Daily</div>
-                            <div class="chart-option">Weekly</div>
-                            <div class="chart-option">Monthly</div>
+                            <div class="chart-option active" data-period="daily">Daily</div>
+                            <div class="chart-option" data-period="weekly">Weekly</div>
+                            <div class="chart-option" data-period="monthly">Monthly</div>
                         </div>
                     </div>
                     <div class="chart-wrapper">
@@ -498,19 +824,19 @@
                     </div>
                     <div class="legend">
                         <div class="legend-item">
-                            <div class="legend-color" style="background: #3498db;"></div>
+                            <div class="legend-color" style="background: var(--primary);"></div>
                             <span>Downtown Mall</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background: #e74c3c;"></div>
+                            <div class="legend-color" style="background: var(--danger);"></div>
                             <span>Westside Plaza</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background: #2ecc71;"></div>
+                            <div class="legend-color" style="background: var(--success);"></div>
                             <span>Eastgate Center</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background: #f39c12;"></div>
+                            <div class="legend-color" style="background: var(--warning);"></div>
                             <span>Northpoint</span>
                         </div>
                     </div>
@@ -521,54 +847,13 @@
                     <div class="chart-header">
                         <div class="chart-title">Footfall Heatmap - Last Week</div>
                         <div class="chart-options">
-                            <div class="chart-option active">By Day</div>
-                            <div class="chart-option">By Hour</div>
+                            <div class="chart-option" data-view="hour">By Hour</div>
+                            <div class="chart-option active" data-view="day">By Day</div>
+                            
                         </div>
                     </div>
-                    <div class="heatmap">
-                        <!-- Heatmap cells with different intensity levels -->
-                        <div class="heatmap-cell" style="background: #f0f9ff;">2.1k</div>
-                        <div class="heatmap-cell" style="background: #b3e0ff;">3.5k</div>
-                        <div class="heatmap-cell" style="background: #66c2ff;">4.2k</div>
-                        <div class="heatmap-cell" style="background: #1a9fff;">5.7k</div>
-                        <div class="heatmap-cell" style="background: #007acc;">6.8k</div>
-                        <div class="heatmap-cell" style="background: #005c99;">7.2k</div>
-                        <div class="heatmap-cell" style="background: #003d66;">8.5k</div>
-                        <div class="heatmap-cell" style="background: #f0f9ff;">2.3k</div>
-                        <div class="heatmap-cell" style="background: #b3e0ff;">3.1k</div>
-                        <div class="heatmap-cell" style="background: #66c2ff;">4.8k</div>
-                        <div class="heatmap-cell" style="background: #1a9fff;">5.2k</div>
-                        <div class="heatmap-cell" style="background: #007acc;">6.5k</div>
-                        <div class="heatmap-cell" style="background: #005c99;">7.9k</div>
-                        <div class="heatmap-cell" style="background: #003d66;">9.1k</div>
-                        <div class="heatmap-cell" style="background: #f0f9ff;">1.8k</div>
-                        <div class="heatmap-cell" style="background: #b3e0ff;">2.9k</div>
-                        <div class="heatmap-cell" style="background: #66c2ff;">3.7k</div>
-                        <div class="heatmap-cell" style="background: #1a9fff;">4.5k</div>
-                        <div class="heatmap-cell" style="background: #007acc;">5.8k</div>
-                        <div class="heatmap-cell" style="background: #005c99;">6.2k</div>
-                        <div class="heatmap-cell" style="background: #003d66;">7.5k</div>
-                        <div class="heatmap-cell" style="background: #f0f9ff;">2.5k</div>
-                        <div class="heatmap-cell" style="background: #b3e0ff;">3.8k</div>
-                        <div class="heatmap-cell" style="background: #66c2ff;">4.1k</div>
-                        <div class="heatmap-cell" style="background: #1a9fff;">5.9k</div>
-                        <div class="heatmap-cell" style="background: #007acc;">6.7k</div>
-                        <div class="heatmap-cell" style="background: #005c99;">7.3k</div>
-                        <div class="heatmap-cell" style="background: #003d66;">8.8k</div>
-                        <div class="heatmap-cell" style="background: #f0f9ff;">3.2k</div>
-                        <div class="heatmap-cell" style="background: #b3e0ff;">4.5k</div>
-                        <div class="heatmap-cell" style="background: #66c2ff;">5.1k</div>
-                        <div class="heatmap-cell" style="background: #1a9fff;">6.3k</div>
-                        <div class="heatmap-cell" style="background: #007acc;">7.5k</div>
-                        <div class="heatmap-cell" style="background: #005c99;">8.2k</div>
-                        <div class="heatmap-cell" style="background: #003d66;">9.6k</div>
-                        <div class="heatmap-cell" style="background: #f0f9ff;">4.1k</div>
-                        <div class="heatmap-cell" style="background: #b3e0ff;">5.7k</div>
-                        <div class="heatmap-cell" style="background: #66c2ff;">6.2k</div>
-                        <div class="heatmap-cell" style="background: #1a9fff;">7.8k</div>
-                        <div class="heatmap-cell" style="background: #007acc;">8.5k</div>
-                        <div class="heatmap-cell" style="background: #005c99;">9.1k</div>
-                        <div class="heatmap-cell" style="background: #003d66;">10.4k</div>
+                    <div class="heatmap" id="heatmap">
+                        <!-- Heatmap cells will be generated by JavaScript -->
                     </div>
                     <div class="legend">
                         <div class="legend-item">
@@ -599,9 +884,9 @@
                     <div class="chart-header">
                         <div class="chart-title">Category Performance</div>
                         <div class="chart-options">
-                            <div class="chart-option active">By Sales</div>
-                            <div class="chart-option">By Footfall</div>
-                            <div class="chart-option">By Conversion</div>
+                            <div class="chart-option active" data-metric="sales">By Sales</div>
+                            <div class="chart-option" data-metric="footfall">By Footfall</div>
+                            <div class="chart-option" data-metric="conversion">By Conversion</div>
                         </div>
                     </div>
                     <div class="chart-wrapper">
@@ -614,12 +899,12 @@
                     <div class="chart-header">
                         <div class="chart-title">Mall Performance KPIs</div>
                         <div class="chart-options">
-                            <div class="chart-option active">All</div>
-                            <div class="chart-option">Region</div>
-                            <div class="chart-option">Size</div>
+                            <div class="chart-option active" data-filter="all">All</div>
+                            <div class="chart-option" data-filter="region">Region</div>
+                            <div class="chart-option" data-filter="size">Size</div>
                         </div>
                     </div>
-                    <table class="mall-table">
+                    <table class="mall-table" id="mallTable">
                         <thead>
                             <tr>
                                 <th>Mall</th>
@@ -631,317 +916,937 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Downtown Mall</td>
-                                <td>$2.45M</td>
-                                <td>124,568</td>
-                                <td>$98.75</td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-value" style="width: 92%; background: #3498db;"></div>
-                                    </div>
-                                    <div style="text-align: right; font-size: 12px; margin-top: 3px;">92%</div>
-                                </td>
-                                <td><i class="fas fa-arrow-up" style="color: #27ae60;"></i></td>
-                            </tr>
-                            <tr>
-                                <td>Westside Plaza</td>
-                                <td>$1.87M</td>
-                                <td>98,452</td>
-                                <td>$76.32</td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-value" style="width: 88%; background: #e74c3c;"></div>
-                                    </div>
-                                    <div style="text-align: right; font-size: 12px; margin-top: 3px;">88%</div>
-                                </td>
-                                <td><i class="fas fa-arrow-down" style="color: #e74c3c;"></i></td>
-                            </tr>
-                            <tr>
-                                <td>Eastgate Center</td>
-                                <td>$1.52M</td>
-                                <td>85,321</td>
-                                <td>$89.45</td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-value" style="width: 91%; background: #2ecc71;"></div>
-                                    </div>
-                                    <div style="text-align: right; font-size: 12px; margin-top: 3px;">91%</div>
-                                </td>
-                                <td><i class="fas fa-arrow-up" style="color: #27ae60;"></i></td>
-                            </tr>
-                            <tr>
-                                <td>Northpoint</td>
-                                <td>$1.23M</td>
-                                <td>78,654</td>
-                                <td>$65.78</td>
-                                <td>
-                                    <div class="progress-bar">
-                                        <div class="progress-value" style="width: 85%; background: #f39c12;"></div>
-                                    </div>
-                                    <div style="text-align: right; font-size: 12px; margin-top: 3px;">85%</div>
-                                </td>
-                                <td><i class="fas fa-arrow-up" style="color: #27ae60;"></i></td>
-                            </tr>
+                            <!-- Table rows will be generated by JavaScript -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Tooltip Element -->
+    <div class="tooltip" id="tooltip"></div>
 
     <script>
-        // Sales Trend Chart (Mini)
-        const salesTrendCtx = document.getElementById('salesTrendChart').getContext('2d');
-        new Chart(salesTrendCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    data: [1850000, 1950000, 2100000, 2200000, 2300000, 2450000],
-                    borderColor: 'rgba(255, 255, 255, 0.8)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    fill: true,
-                    pointRadius: 0
-                }]
+        // DOM Elements
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const dateFilter = document.getElementById('dateFilter');
+        const dateDropdown = document.getElementById('dateDropdown');
+        const dateOptions = document.querySelectorAll('.date-option');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const dashboardGrid = document.getElementById('dashboardGrid');
+        const heatmap = document.getElementById('heatmap');
+        const mallTable = document.getElementById('mallTable').querySelector('tbody');
+        const tooltip = document.getElementById('tooltip');
+        
+        // Data variables
+        let currentDateRange = '30';
+        let currentComparisonPeriod = 'daily';
+        let currentCategoryMetric = 'sales';
+        let currentTableView = 'all';
+        let currentHeatmapView = 'day';
+        
+        // Sample data for the dashboard
+        const mallData = {
+            downtown: {
+                name: "Downtown Mall",
+                sales: 2450000,
+                footfall: 124568,
+                avgSpend: 98.75,
+                occupancy: 92,
+                trend: "up",
+                region: "Central",
+                size: "Large"
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                },
-                scales: {
-                    x: { display: false },
-                    y: { display: false }
-                }
+            westside: {
+                name: "Westside Plaza",
+                sales: 1870000,
+                footfall: 98452,
+                avgSpend: 76.32,
+                occupancy: 88,
+                trend: "down",
+                region: "West",
+                size: "Medium"
+            },
+            eastgate: {
+                name: "Eastgate Center",
+                sales: 1520000,
+                footfall: 85321,
+                avgSpend: 89.45,
+                occupancy: 91,
+                trend: "up",
+                region: "East",
+                size: "Large"
+            },
+            northpoint: {
+                name: "Northpoint",
+                sales: 1230000,
+                footfall: 78654,
+                avgSpend: 65.78,
+                occupancy: 85,
+                trend: "up",
+                region: "North",
+                size: "Medium"
             }
-        });
-
-        // Footfall Chart (Mini)
-        const footfallCtx = document.getElementById('footfallChart').getContext('2d');
-        new Chart(footfallCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    data: [22000, 23500, 24500, 25500, 26500, 28500, 24500],
-                    backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                    borderColor: 'rgba(52, 152, 219, 1)',
-                    borderWidth: 0,
-                    borderRadius: 4
-                }]
+        };
+        
+        const categoryData = {
+            sales: {
+                fashion: 850000,
+                electronics: 620000,
+                food: 480000,
+                home: 320000,
+                entertainment: 280000,
+                services: 150000
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                },
-                scales: {
-                    x: { display: false },
-                    y: { display: false }
-                }
+            footfall: {
+                fashion: 42000,
+                electronics: 38000,
+                food: 65000,
+                home: 28000,
+                entertainment: 35000,
+                services: 18000
+            },
+            conversion: {
+                fashion: 22.5,
+                electronics: 18.7,
+                food: 15.2,
+                home: 12.8,
+                entertainment: 10.5,
+                services: 8.3
             }
+        };
+        
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize event listeners
+            initEventListeners();
+            
+            // Initialize charts
+            initCharts();
+            
+            // Generate heatmap
+            generateHeatmap();
+            
+            // Generate table
+            generateTable();
+            
+            // Simulate real-time data updates
+            simulateRealTimeData();
         });
-
-        // Spend Distribution Chart (Mini)
-        const spendCtx = document.getElementById('spendChart').getContext('2d');
-        new Chart(spendCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Under $50', '$50-$100', '$100-$150', 'Over $150'],
-                datasets: [{
-                    data: [25, 40, 20, 15],
-                    backgroundColor: [
-                        'rgba(46, 204, 113, 0.7)',
-                        'rgba(52, 152, 219, 0.7)',
-                        'rgba(155, 89, 182, 0.7)',
-                        'rgba(241, 196, 15, 0.7)'
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                }
-            }
-        });
-
-        // Occupancy Chart (Mini)
-        const occupancyCtx = document.getElementById('occupancyChart').getContext('2d');
-        new Chart(occupancyCtx, {
-            type: 'line',
-            data: {
-                labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-                datasets: [{
-                    data: [89, 90, 91, 92],
-                    borderColor: '#e74c3c',
-                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                    borderWidth: 2,
-                    tension: 0.4,
-                    fill: true,
-                    pointRadius: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
+        
+        // Event Listeners
+        function initEventListeners() {
+            // Mobile menu toggle
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('open');
+            });
+            
+            // Date filter dropdown
+            dateFilter.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dateDropdown.classList.toggle('show');
+            });
+            
+            // Date option selection
+            dateOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    currentDateRange = this.getAttribute('data-value');
+                    
+                    // Update active option
+                    dateOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update filter text
+                    dateFilter.querySelector('span').textContent = this.textContent;
+                    
+                    // Close dropdown
+                    dateDropdown.classList.remove('show');
+                    
+                    // Refresh data based on new date range
+                    updateDashboardData();
+                });
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function() {
+                dateDropdown.classList.remove('show');
+            });
+            
+            // Refresh button
+            refreshBtn.addEventListener('click', function() {
+                refreshDashboard();
+            });
+            
+            // Chart period options
+            document.querySelectorAll('[data-period]').forEach(option => {
+                option.addEventListener('click', function() {
+                    currentComparisonPeriod = this.getAttribute('data-period');
+                    
+                    // Update active option
+                    this.parentElement.querySelectorAll('.chart-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Update comparison chart
+                    updateComparisonChart();
+                });
+            });
+            
+            // Category metric options
+            document.querySelectorAll('[data-metric]').forEach(option => {
+                option.addEventListener('click', function() {
+                    currentCategoryMetric = this.getAttribute('data-metric');
+                    
+                    // Update active option
+                    this.parentElement.querySelectorAll('.chart-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Update category chart
+                    updateCategoryChart();
+                });
+            });
+            
+            // Table view options
+            document.querySelectorAll('[data-filter]').forEach(option => {
+                option.addEventListener('click', function() {
+                    currentTableView = this.getAttribute('data-filter');
+                    
+                    // Update active option
+                    this.parentElement.querySelectorAll('.chart-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Update table
+                    generateTable();
+                });
+            });
+            
+            // Heatmap view options
+            document.querySelectorAll('[data-view]').forEach(option => {
+                option.addEventListener('click', function() {
+                    currentHeatmapView = this.getAttribute('data-view');
+                    
+                    // Update active option
+                    this.parentElement.querySelectorAll('.chart-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Update heatmap
+                    generateHeatmap();
+                });
+            });
+        }
+        
+        // Initialize Charts
+        function initCharts() {
+            // Sales Trend Chart (Mini)
+            const salesTrendCtx = document.getElementById('salesTrendChart').getContext('2d');
+            window.salesTrendChart = new Chart(salesTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: generateDateLabels(7),
+                    datasets: [{
+                        data: generateRandomData(7, 1800000, 2500000),
+                        borderColor: 'rgba(255, 255, 255, 0.8)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0
+                    }]
                 },
-                scales: {
-                    x: { display: false },
-                    y: { 
-                        display: false,
-                        min: 85,
-                        max: 95
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
                     }
                 }
-            }
-        });
-
-        // Comparison Chart
-        const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
-        new Chart(comparisonCtx, {
-            type: 'line',
-            data: {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                datasets: [
-                    {
-                        label: 'Downtown Mall',
-                        data: [450000, 520000, 580000, 620000],
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: true
-                    },
-                    {
-                        label: 'Westside Plaza',
-                        data: [380000, 420000, 450000, 470000],
-                        borderColor: '#e74c3c',
-                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: true
-                    },
-                    {
-                        label: 'Eastgate Center',
-                        data: [320000, 350000, 380000, 400000],
-                        borderColor: '#2ecc71',
-                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: true
-                    },
-                    {
-                        label: 'Northpoint',
-                        data: [280000, 310000, 330000, 350000],
-                        borderColor: '#f39c12',
-                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: true
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
-                    }
+            });
+            
+            // Footfall Chart (Mini)
+            const footfallCtx = document.getElementById('footfallChart').getContext('2d');
+            window.footfallChart = new Chart(footfallCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        data: [22000, 23500, 24500, 25500, 26500, 28500, 24500],
+                        backgroundColor: 'rgba(67, 97, 238, 0.7)',
+                        borderColor: 'rgba(67, 97, 238, 1)',
+                        borderWidth: 0,
+                        borderRadius: 4
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + (value / 1000) + 'k';
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
+            
+            // Spend Distribution Chart (Mini)
+            const spendCtx = document.getElementById('spendChart').getContext('2d');
+            window.spendChart = new Chart(spendCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Under $50', '$50-$100', '$100-$150', 'Over $150'],
+                    datasets: [{
+                        data: [25, 40, 20, 15],
+                        backgroundColor: [
+                            'rgba(74, 222, 128, 0.7)',
+                            'rgba(67, 97, 238, 0.7)',
+                            'rgba(155, 89, 182, 0.7)',
+                            'rgba(245, 158, 11, 0.7)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+            
+            // Occupancy Chart (Mini)
+            const occupancyCtx = document.getElementById('occupancyChart').getContext('2d');
+            window.occupancyChart = new Chart(occupancyCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [{
+                        data: [89, 90, 91, 92],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { 
+                            display: false,
+                            min: 85,
+                            max: 95
+                        }
+                    }
+                }
+            });
+            
+            // Comparison Chart
+            const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+            window.comparisonChart = new Chart(comparisonCtx, {
+                type: 'line',
+                data: getComparisonChartData('daily'),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': $' + context.raw.toLocaleString();
+                                }
                             }
                         }
                     },
-                    x: {
-                        grid: {
-                            display: false
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + (value / 1000).toLocaleString() + 'k';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
                         }
                     }
                 }
+            });
+            
+            // Category Chart
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            window.categoryChart = new Chart(categoryCtx, {
+                type: 'bar',
+                data: getCategoryChartData('sales'),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (currentCategoryMetric === 'sales') {
+                                        return '$' + context.raw.toLocaleString();
+                                    } else if (currentCategoryMetric === 'footfall') {
+                                        return context.raw.toLocaleString() + ' visitors';
+                                    } else {
+                                        return context.raw + '% conversion';
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    if (currentCategoryMetric === 'sales') {
+                                        return '$' + (value / 1000).toLocaleString() + 'k';
+                                    } else if (currentCategoryMetric === 'footfall') {
+                                        return (value / 1000).toLocaleString() + 'k';
+                                    } else {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Generate Heatmap
+        function generateHeatmap() {
+            heatmap.innerHTML = '';
+            
+            if (currentHeatmapView === 'day') {
+                // Generate day heatmap (7 days)
+                const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                const maxFootfall = 12000;
+                
+                days.forEach(day => {
+                    const value = Math.floor(Math.random() * maxFootfall) + 2000;
+                    const intensity = Math.min(Math.floor(value / (maxFootfall / 6)), 5);
+                    const bgColors = ['#f0f9ff', '#b3e0ff', '#66c2ff', '#1a9fff', '#007acc', '#005c99'];
+                    
+                    const cell = document.createElement('div');
+                    cell.className = 'heatmap-cell';
+                    cell.style.background = bgColors[intensity];
+                    cell.textContent = (value / 1000).toFixed(1) + 'k';
+                    
+                    // Add tooltip
+                    cell.addEventListener('mousemove', (e) => {
+                        tooltip.style.opacity = '1';
+                        tooltip.textContent = `${day}: ${value.toLocaleString()} visitors`;
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                    });
+                    
+                    cell.addEventListener('mouseout', () => {
+                        tooltip.style.opacity = '0';
+                    });
+                    
+                    heatmap.appendChild(cell);
+                });
+            } else {
+                // Generate hour heatmap (24 hours)
+                const maxFootfall = 2000;
+                
+                for (let i = 0; i < 24; i++) {
+                    const hour = i === 0 ? '12AM' : i < 12 ? `${i}AM` : i === 12 ? '12PM' : `${i-12}PM`;
+                    const value = Math.floor(Math.random() * maxFootfall) + (i >= 10 && i <= 20 ? 500 : 100);
+                    const intensity = Math.min(Math.floor(value / (maxFootfall / 6)), 5);
+                    const bgColors = ['#f0f9ff', '#b3e0ff', '#66c2ff', '#1a9fff', '#007acc', '#005c99'];
+                    
+                    const cell = document.createElement('div');
+                    cell.className = 'heatmap-cell';
+                    cell.style.background = bgColors[intensity];
+                    cell.textContent = hour;
+                    
+                    // Add tooltip
+                    cell.addEventListener('mousemove', (e) => {
+                        tooltip.style.opacity = '1';
+                        tooltip.textContent = `${hour}: ${value.toLocaleString()} visitors`;
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                    });
+                    
+                    cell.addEventListener('mouseout', () => {
+                        tooltip.style.opacity = '0';
+                    });
+                    
+                    heatmap.appendChild(cell);
+                }
+                
+                // Update grid for hours view
+                heatmap.style.gridTemplateColumns = 'repeat(8, 1fr)';
             }
-        });
-
-        // Category Chart
-        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-        new Chart(categoryCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Fashion', 'Electronics', 'Food & Bev', 'Home Goods', 'Entertainment', 'Services'],
-                datasets: [
-                    {
+        }
+        
+        // Generate Table
+        function generateTable() {
+            mallTable.innerHTML = '';
+            
+            Object.values(mallData).forEach(mall => {
+                // Apply filters if needed
+                if (currentTableView === 'region' && mall.region !== 'Central') return;
+                if (currentTableView === 'size' && mall.size !== 'Large') return;
+                
+                const row = document.createElement('tr');
+                
+                // Mall name
+                const nameCell = document.createElement('td');
+                nameCell.textContent = mall.name;
+                row.appendChild(nameCell);
+                
+                // Sales
+                const salesCell = document.createElement('td');
+                salesCell.textContent = '$' + (mall.sales / 1000000).toFixed(2) + 'M';
+                row.appendChild(salesCell);
+                
+                // Footfall
+                const footfallCell = document.createElement('td');
+                footfallCell.textContent = mall.footfall.toLocaleString();
+                row.appendChild(footfallCell);
+                
+                // Avg Spend
+                const spendCell = document.createElement('td');
+                spendCell.textContent = '$' + mall.avgSpend.toFixed(2);
+                row.appendChild(spendCell);
+                
+                // Occupancy
+                const occupancyCell = document.createElement('td');
+                const progressBar = document.createElement('div');
+                progressBar.className = 'progress-bar';
+                
+                const progressValue = document.createElement('div');
+                progressValue.className = 'progress-value';
+                progressValue.style.width = mall.occupancy + '%';
+                
+                // Different colors based on occupancy
+                if (mall.occupancy >= 90) {
+                    progressValue.style.background = 'var(--success)';
+                } else if (mall.occupancy >= 85) {
+                    progressValue.style.background = 'var(--warning)';
+                } else {
+                    progressValue.style.background = 'var(--danger)';
+                }
+                
+                progressBar.appendChild(progressValue);
+                occupancyCell.appendChild(progressBar);
+                
+                const percentText = document.createElement('div');
+                percentText.style.textAlign = 'right';
+                percentText.style.fontSize = '12px';
+                percentText.style.marginTop = '3px';
+                percentText.textContent = mall.occupancy + '%';
+                occupancyCell.appendChild(percentText);
+                
+                row.appendChild(occupancyCell);
+                
+                // Trend
+                const trendCell = document.createElement('td');
+                const trendIcon = document.createElement('i');
+                trendIcon.className = 'fas trend-icon';
+                
+                if (mall.trend === 'up') {
+                    trendIcon.classList.add('fa-arrow-up');
+                    trendIcon.style.color = 'var(--success)';
+                } else {
+                    trendIcon.classList.add('fa-arrow-down');
+                    trendIcon.style.color = 'var(--danger)';
+                }
+                
+                trendCell.appendChild(trendIcon);
+                row.appendChild(trendCell);
+                
+                mallTable.appendChild(row);
+            });
+        }
+        
+        // Update Dashboard Data
+        function updateDashboardData() {
+            // Show loading animation
+            dashboardGrid.classList.add('loading');
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // Update KPI values based on date range
+                const rangeFactor = currentDateRange === '7' ? 0.8 : currentDateRange === '30' ? 1 : currentDateRange === '90' ? 1.2 : 1.5;
+                
+                document.getElementById('totalSales').textContent = 'euros' + (2.45 * rangeFactor).toFixed(2) + 'M';
+                document.getElementById('dailyFootfall').textContent = Math.floor(24568 * rangeFactor).toLocaleString();
+                document.getElementById('avgSpend').textContent = 'euros' + (98.75 * (rangeFactor * 0.9)).toFixed(2);
+                document.getElementById('occupancyRate').textContent = (92.4 - (rangeFactor * 0.1)).toFixed(1) + '%';
+                
+                // Update charts
+                updateMiniCharts();
+                updateComparisonChart();
+                updateCategoryChart();
+                
+                // Update heatmap and table
+                generateHeatmap();
+                generateTable();
+                
+                // Hide loading animation
+                dashboardGrid.classList.remove('loading');
+            }, 800);
+        }
+        
+        // Update Mini Charts
+        function updateMiniCharts() {
+            // Sales Trend Chart
+            salesTrendChart.data.labels = generateDateLabels(7);
+            salesTrendChart.data.datasets[0].data = generateRandomData(7, 1800000, 2500000);
+            salesTrendChart.update();
+            
+            // Footfall Chart
+            footfallChart.data.datasets[0].data = generateRandomData(7, 20000, 30000);
+            footfallChart.update();
+            
+            // Spend Chart
+            spendChart.data.datasets[0].data = generateRandomData(4, 10, 40, true);
+            spendChart.update();
+            
+            // Occupancy Chart
+            occupancyChart.data.datasets[0].data = generateRandomData(4, 85, 93, true);
+            occupancyChart.update();
+        }
+        
+        // Update Comparison Chart
+        function updateComparisonChart() {
+            comparisonChart.data = getComparisonChartData(currentComparisonPeriod);
+            comparisonChart.update();
+        }
+        
+        // Update Category Chart
+        function updateCategoryChart() {
+            categoryChart.data = getCategoryChartData(currentCategoryMetric);
+            categoryChart.update();
+        }
+        
+        // Refresh Dashboard
+        function refreshDashboard() {
+            // Add spin animation to refresh button
+            refreshBtn.classList.add('fa-spin');
+            
+            // Show loading animation
+            dashboardGrid.classList.add('loading');
+            
+            // Simulate refresh delay
+            setTimeout(() => {
+                // Update all data
+                updateDashboardData();
+                
+                // Stop spin animation
+                refreshBtn.classList.remove('fa-spin');
+            }, 1200);
+        }
+        
+        // Simulate Real-time Data
+        function simulateRealTimeData() {
+            // Update footfall every 5 seconds
+            setInterval(() => {
+                const currentFootfall = parseInt(document.getElementById('dailyFootfall').textContent.replace(/,/g, ''));
+                const newFootfall = currentFootfall + Math.floor(Math.random() * 100) - 45;
+                document.getElementById('dailyFootfall').textContent = Math.max(20000, newFootfall).toLocaleString();
+                
+                // Update mini footfall chart
+                const newData = footfallChart.data.datasets[0].data;
+                newData.shift();
+                newData.push(Math.floor(Math.random() * 5000) + 20000);
+                footfallChart.update();
+            }, 5000);
+            
+            // Update sales trend every 10 seconds
+            setInterval(() => {
+                const newData = salesTrendChart.data.datasets[0].data;
+                newData.shift();
+                newData.push(Math.floor(Math.random() * 700000) + 1800000);
+                salesTrendChart.update();
+            }, 10000);
+        }
+        
+        // Helper Functions
+        function generateDateLabels(count) {
+            const labels = [];
+            const now = new Date();
+            
+            for (let i = count - 1; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            }
+            
+            return labels;
+        }
+        
+        function generateRandomData(count, min, max, integers = false) {
+            const data = [];
+            
+            for (let i = 0; i < count; i++) {
+                const value = min + Math.random() * (max - min);
+                data.push(integers ? Math.floor(value) : value);
+            }
+            
+            return data;
+        }
+        
+        function getComparisonChartData(period) {
+            if (period === 'daily') {
+                return {
+                    labels: generateDateLabels(14),
+                    datasets: [
+                        {
+                            label: 'Downtown Mall',
+                            data: generateRandomData(14, 400000, 650000),
+                            borderColor: 'var(--primary)',
+                            backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Westside Plaza',
+                            data: generateRandomData(14, 350000, 500000),
+                            borderColor: 'var(--danger)',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Eastgate Center',
+                            data: generateRandomData(14, 300000, 450000),
+                            borderColor: 'var(--success)',
+                            backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Northpoint',
+                            data: generateRandomData(14, 250000, 400000),
+                            borderColor: 'var(--warning)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                };
+            } else if (period === 'weekly') {
+                return {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [
+                        {
+                            label: 'Downtown Mall',
+                            data: generateRandomData(4, 2500000, 3500000),
+                            borderColor: 'var(--primary)',
+                            backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Westside Plaza',
+                            data: generateRandomData(4, 1800000, 2500000),
+                            borderColor: 'var(--danger)',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Eastgate Center',
+                            data: generateRandomData(4, 1500000, 2200000),
+                            borderColor: 'var(--success)',
+                            backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Northpoint',
+                            data: generateRandomData(4, 1200000, 1800000),
+                            borderColor: 'var(--warning)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                };
+            } else {
+                return {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [
+                        {
+                            label: 'Downtown Mall',
+                            data: generateRandomData(12, 8000000, 12000000),
+                            borderColor: 'var(--primary)',
+                            backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Westside Plaza',
+                            data: generateRandomData(12, 6000000, 9000000),
+                            borderColor: 'var(--danger)',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Eastgate Center',
+                            data: generateRandomData(12, 5000000, 8000000),
+                            borderColor: 'var(--success)',
+                            backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Northpoint',
+                            data: generateRandomData(12, 4000000, 7000000),
+                            borderColor: 'var(--warning)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                };
+            }
+        }
+        
+        function getCategoryChartData(metric) {
+            const categories = ['Fashion', 'Electronics', 'Food & Bev', 'Home Goods', 'Entertainment', 'Services'];
+            
+            if (metric === 'sales') {
+                return {
+                    labels: categories,
+                    datasets: [{
                         label: 'Sales',
-                        data: [850000, 620000, 480000, 320000, 280000, 150000],
+                        data: [
+                            categoryData.sales.fashion,
+                            categoryData.sales.electronics,
+                            categoryData.sales.food,
+                            categoryData.sales.home,
+                            categoryData.sales.entertainment,
+                            categoryData.sales.services
+                        ],
                         backgroundColor: [
-                            'rgba(52, 152, 219, 0.7)',
+                            'rgba(67, 97, 238, 0.7)',
                             'rgba(155, 89, 182, 0.7)',
-                            'rgba(46, 204, 113, 0.7)',
-                            'rgba(241, 196, 15, 0.7)',
+                            'rgba(74, 222, 128, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
                             'rgba(230, 126, 34, 0.7)',
-                            'rgba(231, 76, 60, 0.7)'
+                            'rgba(239, 68, 68, 0.7)'
                         ],
                         borderRadius: 4
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return '$' + context.raw.toLocaleString();
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + (value / 1000) + 'k';
-                            }
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
+                    }]
+                };
+            } else if (metric === 'footfall') {
+                return {
+                    labels: categories,
+                    datasets: [{
+                        label: 'Footfall',
+                        data: [
+                            categoryData.footfall.fashion,
+                            categoryData.footfall.electronics,
+                            categoryData.footfall.food,
+                            categoryData.footfall.home,
+                            categoryData.footfall.entertainment,
+                            categoryData.footfall.services
+                        ],
+                        backgroundColor: [
+                            'rgba(67, 97, 238, 0.7)',
+                            'rgba(155, 89, 182, 0.7)',
+                            'rgba(74, 222, 128, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(230, 126, 34, 0.7)',
+                            'rgba(239, 68, 68, 0.7)'
+                        ],
+                        borderRadius: 4
+                    }]
+                };
+            } else {
+                return {
+                    labels: categories,
+                    datasets: [{
+                        label: 'Conversion Rate',
+                        data: [
+                            categoryData.conversion.fashion,
+                            categoryData.conversion.electronics,
+                            categoryData.conversion.food,
+                            categoryData.conversion.home,
+                            categoryData.conversion.entertainment,
+                            categoryData.conversion.services
+                        ],
+                        backgroundColor: [
+                            'rgba(67, 97, 238, 0.7)',
+                            'rgba(155, 89, 182, 0.7)',
+                            'rgba(74, 222, 128, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(230, 126, 34, 0.7)',
+                            'rgba(239, 68, 68, 0.7)'
+                        ],
+                        borderRadius: 4
+                    }]
+                };
             }
-        });
+        }
     </script>
 </body>
 </html>
